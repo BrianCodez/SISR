@@ -1,5 +1,5 @@
-use std::panic;
 use std::sync::{Arc, Mutex, OnceLock};
+use std::{env, panic};
 
 use crate::app::App;
 use crate::app::gui::dispatcher::GuiDispatcher;
@@ -8,7 +8,8 @@ use crate::app::input::event::handler::{
     cef_debug_ready, change_viiper_type, connect_viiper_device, disconnect_viiper_device,
     ignore_device, kbm_key_event, kbm_pointer_event, kbm_release_all, on_controller_button_down,
     on_viiper_event, overlay_state_changed, sdl_device_connected, sdl_device_disconnected,
-    sdl_gamepad_steam_handle_updated, sdl_gamepad_update_complete, set_kbm_emulation, viiper_ready,
+    sdl_gamepad_steam_handle_updated, sdl_gamepad_update_complete, sdl_sensor_update,
+    set_kbm_emulation, viiper_ready,
 };
 use crate::app::input::event::handler_events::HandlerEvent;
 use crate::app::input::event::kbm_context::KbmContext;
@@ -55,8 +56,17 @@ impl InputLoop {
         for (hint_name, hint_value) in sdl_hints::SDL_HINTS {
             match sdl3::hint::set(hint_name, hint_value) {
                 true => tracing::trace!("Set SDL hint {hint_name}={hint_value}"),
-                false => tracing::warn!("Failed to set SDL hint {hint_name}={hint_value}"),
+                false => {
+                    let actual_value = sdl3::hint::get(hint_name);
+                    let last_err = sdl3::get_error();
+                    tracing::warn!(
+                        "Failed to set SDL hint {hint_name}={hint_value}; actual value {actual_value:?}; last error: {last_err}"
+                    )
+                }
             }
+            // unsafe {
+            //     env::set_var(hint_name, hint_value);
+            // }
         }
         let sdl = match sdl3::init() {
             Ok(sdl) => sdl,
@@ -173,6 +183,10 @@ impl InputLoop {
                 viiper_bridge.clone(),
             )),
             Arc::new(change_viiper_type::Handler::new(
+                context.clone(),
+                viiper_bridge.clone(),
+            )),
+            Arc::new(sdl_sensor_update::Handler::new(
                 context.clone(),
                 viiper_bridge.clone(),
             )),

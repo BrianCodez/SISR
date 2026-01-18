@@ -34,7 +34,7 @@ impl EventHandler for Handler {
         event: &Option<RoutedEvent>,
         _sdl_event: &SDL_Event,
     ) {
-        tracing::debug!(event = ?event);
+        // tracing::debug!(event = ?event);
         let event = match event {
             Some(RoutedEvent::UserEvent(event)) => event,
             _ => {

@@ -57,6 +57,13 @@ Ignore controllers connected after SISR starts. Prevents controller doubling iss
 - Default: `true`
 - Env var: `SISR_REQUIRE_CONTROLLERS_CONNECTED_BEFORE_LAUNCH`
 
+#### `--gyro-passthrough [true|false]`
+
+Enable gyro passthrough for supported controllers
+
+- Default: `true`
+- Env var: `SISR_GYRO_PASSTHROUGH`
+
 ### Window
 
 #### `-w`, `--window-create [true|false]`

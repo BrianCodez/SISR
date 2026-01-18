@@ -1,3 +1,4 @@
+use sdl3::sensor::SensorType;
 use viiper_client::devices::dualshock4::{self, Dualshock4Input};
 
 pub fn update_from_sdl_gamepad(istate: &mut Dualshock4Input, gp: &sdl3::gamepad::Gamepad) {
@@ -65,4 +66,51 @@ pub fn update_from_sdl_gamepad(istate: &mut Dualshock4Input, gp: &sdl3::gamepad:
         (((gp.axis(sdl3::gamepad::Axis::RightY) as i32) * 128) / 32767).clamp(-128, 127) as i8;
 
     // TODO: touchpad, gyro, accel
+}
+
+pub fn update_sensor(istate: &mut Dualshock4Input, sensor: SensorType, data: &[f32; 3]) {
+    match sensor {
+        SensorType::Gyroscope => {
+            // SDL3 provides gyroscope data in rad/s
+            // See: https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_sensor.h
+            // VIIPER DS4 input expects fixed-point °/s
+            // See: https://alia5.github.io/VIIPER/main/devices/dualshock4/
+
+            const RAD_TO_DEG: f32 = 180.0 / core::f32::consts::PI;
+            const GYRO_COUNTS_PER_DPS: f32 = 16.0;
+            const I16_MIN_F: f32 = i16::MIN as f32;
+            const I16_MAX_F: f32 = i16::MAX as f32;
+
+            istate.gyro_x = (data[0] * RAD_TO_DEG * GYRO_COUNTS_PER_DPS)
+                .round()
+                .clamp(I16_MIN_F, I16_MAX_F) as i16;
+            istate.gyro_y = (data[1] * RAD_TO_DEG * GYRO_COUNTS_PER_DPS)
+                .round()
+                .clamp(I16_MIN_F, I16_MAX_F) as i16;
+            istate.gyro_z = (data[2] * RAD_TO_DEG * GYRO_COUNTS_PER_DPS)
+                .round()
+                .clamp(I16_MIN_F, I16_MAX_F) as i16;
+        }
+        SensorType::Accelerometer => {
+            const ACCEL_COUNTS_PER_MS2: f32 = 512.0;
+            const I16_MIN_F: f32 = i16::MIN as f32;
+            const I16_MAX_F: f32 = i16::MAX as f32;
+
+            istate.accel_x = (data[0] * ACCEL_COUNTS_PER_MS2)
+                .round()
+                .clamp(I16_MIN_F, I16_MAX_F) as i16;
+            istate.accel_y = (data[1] * ACCEL_COUNTS_PER_MS2)
+                .round()
+                .clamp(I16_MIN_F, I16_MAX_F) as i16;
+            istate.accel_z = (data[2] * ACCEL_COUNTS_PER_MS2)
+                .round()
+                .clamp(I16_MIN_F, I16_MAX_F) as i16;
+        }
+        _ => {
+            tracing::warn!(
+                "Attempted sensor update on unsupported sensor type: {:?}",
+                sensor
+            );
+        }
+    };
 }

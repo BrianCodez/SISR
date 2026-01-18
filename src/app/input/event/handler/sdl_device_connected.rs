@@ -63,6 +63,43 @@ impl EventHandler for Handler {
             }
         };
 
+        if get_config()
+            .controller_emulation
+            .gyro_passthrough
+            .unwrap_or(true)
+            && let Some(gp) = &gamepad
+        {
+            unsafe {
+                if gp.has_sensor(sdl3::sensor::SensorType::Gyroscope) {
+                    let Ok(()) = gp.sensor_set_enabled(sdl3::sensor::SensorType::Gyroscope, true)
+                    else {
+                        tracing::error!(
+                            "Failed to enable gyroscope sensor on gamepad for SDL id {}",
+                            which
+                        );
+                        return;
+                    };
+                    tracing::debug!("Enabled gyroscope sensor on gamepad for SDL id {}", which);
+                }
+
+                if gp.has_sensor(sdl3::sensor::SensorType::Accelerometer) {
+                    let Ok(()) =
+                        gp.sensor_set_enabled(sdl3::sensor::SensorType::Accelerometer, true)
+                    else {
+                        tracing::error!(
+                            "Failed to enable accelerometer sensor on gamepad for SDL id {}",
+                            which
+                        );
+                        return;
+                    };
+                    tracing::debug!(
+                        "Enabled accelerometer sensor on gamepad for SDL id {}",
+                        which
+                    );
+                }
+            }
+        }
+
         let steam_handle = if let Some(gamepad) = &gamepad {
             get_gamepad_steam_handle(gamepad)
         } else {
@@ -186,6 +223,7 @@ impl EventHandler for Handler {
                 viiper_type: Some(device_type.clone()),
 
                 viiper_device: None,
+                corresponding_device_id: None,
             }));
             ctx.devices.insert(device_id, device.clone());
             tracing::info!("Added new device {:?}", device.clone().lock().ok());

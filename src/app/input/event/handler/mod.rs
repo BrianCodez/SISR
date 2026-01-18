@@ -14,5 +14,6 @@ pub mod sdl_device_disconnected;
 pub mod sdl_gamepad_steam_handle_updated;
 pub mod sdl_gamepad_update_complete;
 pub mod sdl_joystick_update_complete;
+pub mod sdl_sensor_update;
 pub mod set_kbm_emulation;
 pub mod viiper_ready;

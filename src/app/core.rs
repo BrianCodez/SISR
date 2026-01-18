@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use std::process::{Child, Command};
 use std::process::ExitCode;
 use std::sync::{Arc, Mutex, OnceLock, RwLock};
-use std::thread;
+use std::{env, thread};
 use tokio::sync::Notify;
 use tracing::{debug, error, info, trace, warn};
 
@@ -104,6 +104,7 @@ impl App {
                 hid_hooks::rehook::rehook(hook);
             }
         }
+
 
         let dispatcher = self.gui_dispatcher.clone();
         window::set_continuous_redraw(self.cfg.window.continous_draw.unwrap_or(false));

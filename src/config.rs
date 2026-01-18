@@ -202,6 +202,17 @@ pub struct ControllerEmulation {
         help = "Require controllers to be connected before launch (true/false) [default: false]"
     )]
     pub require_controllers_connected_before_launch: Option<bool>,
+
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[arg(
+        long = "gyro-passthrough",
+        value_name = "BOOL",
+        num_args = 0..=1,
+        default_missing_value = "true",
+        env = "SISR_GYRO_PASSTHROUGH",
+        help = "Enable gyro passthrough for supported controllers (true/false) [default: true]"
+    )]
+    pub gyro_passthrough: Option<bool>,
 }
 
 #[derive(Parser, Debug, Serialize, Deserialize, Clone)]
@@ -284,6 +295,7 @@ impl Default for Config {
             controller_emulation: ControllerEmulation {
                 default_controller_type: Some(ControllerType::Xbox360),
                 require_controllers_connected_before_launch: Some(true),
+                gyro_passthrough: Some(true),
             },
             debug: 0,
             marker: false,

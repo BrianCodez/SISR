@@ -165,6 +165,9 @@ kbm_emulation = false
 # Allowed: "xbox360", "dualshock4"
 default_controller_type = "xbox360"
 
+# Enable gyro passthrough for supported controllers
+gyro_passthrough = true
+
 require_controllers_connected_before_launch = true
 
 [window]

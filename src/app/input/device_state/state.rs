@@ -1,5 +1,6 @@
 use std::any::Any;
 
+use sdl3::sensor::SensorType;
 use viiper_client::devices::{
     dualshock4::{Dualshock4Input, Dualshock4Output},
     keyboard::{KeyboardInput, KeyboardOutput},
@@ -72,6 +73,20 @@ impl DeviceState {
             _ => {
                 tracing::warn!(
                     "Attempted not yet implemented controller update: {:?}",
+                    self
+                );
+            }
+        }
+    }
+
+    pub fn update_sensor(&mut self, sensor: SensorType, data: &[f32; 3]) {
+        match self {
+            DeviceState::Dualshock4 { input_state, .. } => {
+                dualshock4_state::update_sensor(input_state, sensor, data);
+            }
+            _ => {
+                tracing::warn!(
+                    "Attempted gyro update on unsupported device state: {:?}",
                     self
                 );
             }

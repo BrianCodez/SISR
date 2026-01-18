@@ -20,8 +20,9 @@
             },
             "args": [
                 "-l=trace",
-                "--log-file=sisr.log",
-                "-w=true"
+                "-w=true",
+                "-f=false",
+                "--default-controller-type=dualshock4"
             ],
             "env": {},
             "internalConsoleOptions": "openOnFirstSessionStart",
