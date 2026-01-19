@@ -32,7 +32,8 @@ The emulated controllers (and Keyboard/Mouse) are indistinguishable from real ha
 SISR achieves this by utilizing [VIIPER](https://github.com/Alia5/VIIPER) (requires **USBIP**).  
 Unlike its predecessor [GlosSI](https://github.com/Alia5/GlosSI), it does not use the unmaintained [ViGEm](https://github.com/ViGEm/ViGEmBus) driver.
 
-> ⚠️ **Highly experimental work in progress.** Everything is subject to change and may or may not work.  
+> [!WARNING]
+**Highly experimental work in progress.** Everything is subject to change and may or may not work.  
 Expect bugs, crashes, and missing features.
 
 ## ✨🛣️ Features / Roadmap
@@ -82,3 +83,4 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
+
