@@ -101,7 +101,7 @@ impl App {
 
             for hook in &hooked_by_steam {
                 tracing::info!("Detected HID hook by Steam: {}", hook);
-                hid_hooks::rehook::rehook(hook);
+                 hid_hooks::rehook::rehook(hook);
             }
         }
 
