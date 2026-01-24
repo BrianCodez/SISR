@@ -54,11 +54,12 @@ fn main() -> ExitCode {
         env::set_var("SteamStreaming", "0");
 
         env::set_var("SDL_GAMECONTROLLER_ALLOW_STEAM_VIRTUAL_GAMEPAD", "1");
-        env::set_var("SDL_JOYSTICK_HIDAPI_STEAMXBOX", "0");
+        env::set_var("SDL_JOYSTICK_HIDAPI_STEAMXBOX", "1");
         // this specific SDL_Hint doesn't work when Steam is injected.
         // Envar does...
         // Ignore real controllers for now util we have found a way to "merge" them with Steams virtual controllers. (when using more than 1...)
         env::set_var("SDL_GAMECONTROLLER_IGNORE_DEVICES", "");
+        env::set_var("SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT", "");
     }
 
     info!("Starting SISR...");
