@@ -7,7 +7,10 @@
 SISR can be used without Steam as a general gamepad to gamepad translator.  
 Eg. you can map a real Switch/Playstation/Steam Controller to an emulated Xbox360 controller, without the need to have Steam running.  
 
-In this mode SISR will **not** interact with Steam in any way.  
+This feature is primarily intended for [networked usage](./networked.md) scenarios,
+for devices that may not be able to run Steam themselves (eg. ARM based machines)
+
+In "no Steam" mode SISR will **not** interact with Steam in any way.  
 This means:  
 
 - No Steam Input configuration will be "_forced_"
