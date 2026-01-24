@@ -5,6 +5,10 @@ SISR can be used over the network to forward controllers, Keyboard/Mouse for gam
 This also allows you to use a Steam Deck (or similar devices)
 as dedicated controllers without the need to stream the entire game
 
+SISR also forwards any keyboard/mouse inputs _(if `--kbm=true` is passed as launch argument)_
+This includes inputs from physical keyboards/mice connected to the hosting machine,
+as well as Steam Input keyboard/mouse bindings and the Steam on-screen keyboard
+
 !!! note "No direct Deck passthrough"
     SISR does **not** directly passthrough the Decks built-in controller hardware  
     (or any direct controller passthrough, for that matter)  

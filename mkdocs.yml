@@ -69,6 +69,7 @@ nav:
     - General Usage: guides/usage.md
     - Multiple Configurations / GlosSI like usage: guides/multi_configs.md  
     - Networked usage: guides/networked.md
+    - DualShock4 Emulation: guides/ds4_emulation.md
   - Troubleshooting: misc/troubleshooting.md
   - FAQ: misc/faq.md
   - Development:
