@@ -68,7 +68,7 @@ PRs welcome! See [GitHub Issues](https://github.com/Alia5/SISR/issues) for open 
 ```license
 SISR - Steam Input System Redirector
 
-Copyright (C) 2025 Peter Repukat
+Copyright (C) 2025-2026 Peter Repukat
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -83,4 +83,5 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
+
 
