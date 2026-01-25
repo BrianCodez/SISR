@@ -46,7 +46,7 @@ impl Gfx {
 
         #[cfg(not(windows))]
         let instance = Instance::new(&InstanceDescriptor {
-            backends: Backends::PRIMARY,
+            backends: Backends::PRIMARY | Backends::VULKAN | Backends::GL,
             ..Default::default()
         });
 
@@ -61,9 +61,15 @@ impl Gfx {
             })
             .await
             .expect("Failed to find an appropriate adapter");
+        let adapter_info = adapter.get_info();
+        let required_features = if adapter_info.backend == wgpu::Backend::Gl {
+            wgpu::Features::empty()
+        } else {
+            wgpu::Features::TEXTURE_FORMAT_16BIT_NORM
+        };
         let device_desc = wgpu::DeviceDescriptor {
             label: None,
-            required_features: wgpu::Features::empty(),
+            required_features,
             required_limits: wgpu::Limits::default(),
             experimental_features: Default::default(),
             memory_hints: Default::default(),
