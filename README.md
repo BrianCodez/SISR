@@ -7,7 +7,8 @@
 [![Issues](https://img.shields.io/github/issues/alia5/SISR)](https://github.com/alia5/SISR/issues)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/alia5/SISR/pulls)
 [![Downloads](https://img.shields.io/github/downloads/alia5/SISR/total?logo=github)](https://github.com/alia5/SISR/releases)
-[![Discord](https://img.shields.io/discord/368823110817808384?logo=discord)](https://discord.gg/hs34MtcHJY)
+[![Discord]([https://img.shields.io/discord/368823110817808384?logo=discord](https://img.shields.io/discord/368823110817808384?logo=discord&logoColor=white&label=Discord&color=%23535fe5
+))](https://discord.gg/hs34MtcHJY)
 
 
 # SISR ✂️
@@ -85,6 +86,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
+
 
 
 
