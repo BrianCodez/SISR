@@ -61,12 +61,9 @@ impl Gfx {
             })
             .await
             .expect("Failed to find an appropriate adapter");
-        let adapter_info = adapter.get_info();
-        let required_features = if adapter_info.backend == wgpu::Backend::Gl {
-            wgpu::Features::empty()
-        } else {
-            wgpu::Features::TEXTURE_FORMAT_16BIT_NORM
-        };
+        // let adapter_info = adapter.get_info();
+        let required_features = wgpu::Features::empty();
+
         let device_desc = wgpu::DeviceDescriptor {
             label: None,
             required_features,
@@ -100,11 +97,24 @@ impl Gfx {
             CompositeAlphaMode::Auto
         };
         debug!("Using alpha_mode={:?}", alpha_mode);
-        // Prefer non-sRGB formats for better alpha handling
+        let preferred_formats = [
+            wgpu::TextureFormat::Bgra8UnormSrgb,
+            wgpu::TextureFormat::Rgba8UnormSrgb,
+            wgpu::TextureFormat::Bgra8Unorm,
+            wgpu::TextureFormat::Rgba8Unorm,
+        ];
         let format = surface_caps
             .formats
             .iter()
-            .find(|f| !f.is_srgb())
+            .find(|f| {
+                if preferred_formats.contains(f) {
+                    return true;
+                }
+                let features = adapter.get_texture_format_features(**f);
+                features
+                    .allowed_usages
+                    .contains(TextureUsages::RENDER_ATTACHMENT)
+            })
             .copied()
             .unwrap_or(surface_caps.formats[0]);
         debug!("Using format={:?}", format);
