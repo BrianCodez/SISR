@@ -395,7 +395,12 @@ The application will now exit.", ||{
                 std::time::Duration::from_secs(6),
             ];
 
-            let client = AsyncViiperClient::new(addr);
+            let viiper_pass = config::get_config().viiper_password.clone();
+            tracing::debug!("VIIPER password: {:?}", viiper_pass.as_deref());
+            let client = AsyncViiperClient::new_with_password(
+                addr, 
+                viiper_pass.unwrap_or("".to_string())
+            );
             
             #[cfg(not(target_os = "linux"))]
             let mut spawn_attempted = false;
@@ -482,6 +487,34 @@ The application will now exit.", ||{
                     }
                     Err(e) => {
                         warn!("VIIPER ping failed (attempt {}): {}", attempt + 1, e);
+
+                        if let viiper_client::ViiperError::Protocol(je) = e
+                                                       && ((je.status == 401) || (je.status == 403)) {
+                                                            let msg = format!(
+"
+VIIPER at {addr} requires authentication.  
+You either have not provided a password, or the provided password is incorrect.
+
+Please provide the correct password via the '--viiper-password' launch argument or config file.  
+
+You can find or change the password (on the machine running VIIPER) in:
+
+    - Windows:               %APPDATA%\\VIIPER\\viiper.key.txt  
+    - Linux/macOS (user):    ~/.config/github.com/Alia5/viiper/viiper.key.txt 
+    - Linux (root/systemd):  /etc/viiper/viiper.key.txt 
+
+SISR will now exit.
+",
+                                                            );
+                                                            error!("{}", msg.replace('\n', " | "));
+                                                            show_dialog_and_quit(
+                                                                window_ready.clone(),
+                                                                "VIIPER authentication required",
+                                                                msg,
+                                                            )
+                                                            .await;
+                                                            return;
+                                                        }
 
                         #[cfg(not(target_os = "linux"))]
                         if addr.ip().is_loopback() && !spawn_attempted {

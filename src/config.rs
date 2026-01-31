@@ -65,6 +65,15 @@ pub struct Config {
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[arg(
+        long = "viiper-password",
+        visible_alias = "vp",
+        env = "SISR_VIIPER_PASSWORD",
+        help = "VIIPER API-server password"
+    )]
+    pub viiper_password: Option<String>,
+
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[arg(
         long = "keyboard-mouse-emulation",
         visible_alias = "kbm",
         value_name = "BOOL",
@@ -266,6 +275,7 @@ impl Default for Config {
             console: Some(false),
             tray: Some(true),
             viiper_address: Some("localhost:3242".to_string()),
+            viiper_password: None,
             kbm_emulation: Some(false),
             window: WindowOpts {
                 create: Some(false),

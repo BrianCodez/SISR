@@ -117,7 +117,10 @@ impl InputLoop {
                 panic!("Failed to get SDL event pump: {e}");
             }
         };
-        let viiper_bridge = Arc::new(Mutex::new(ViiperBridge::new(viiper_address)));
+
+        let viiper_pass = crate::config::get_config().viiper_password.clone();
+
+        let viiper_bridge = Arc::new(Mutex::new(ViiperBridge::new(viiper_address, viiper_pass)));
         let context = Arc::new(Mutex::new(Context::new(viiper_address)));
 
         let kbm_context = Arc::new(Mutex::new(KbmContext::default()));

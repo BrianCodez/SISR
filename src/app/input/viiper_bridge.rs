@@ -73,10 +73,13 @@ pub struct ViiperBridge {
 }
 
 impl ViiperBridge {
-    pub fn new(viiper_address: Option<SocketAddr>) -> Self {
+    pub fn new(viiper_address: Option<SocketAddr>, viiper_password: Option<String>) -> Self {
         Self {
             client: match viiper_address {
-                Some(addr) => Some(Arc::new(AsyncViiperClient::new(addr))),
+                Some(addr) => Some(Arc::new(AsyncViiperClient::new_with_password(
+                    addr,
+                    viiper_password.unwrap_or("".to_string()),
+                ))),
                 None => {
                     warn!("No VIIPER address provided; VIIPER integration disabled");
                     None
