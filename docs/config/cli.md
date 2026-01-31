@@ -28,6 +28,18 @@ VIIPER API-server address. Specify if VIIPER is run manually or on another machi
 - Default: `localhost:3242`
 - Env var: `SISR_VIIPER_ADDRESS`
 
+#### `--viiper-password <password>`, `--vp <password>`
+
+VIIPER API-server password. Required for non-localhost connections
+
+Password can be found on the machine running VIIPER in:
+
+- Windows: `%APPDATA%\VIIPER\viiper.key.txt`
+- Linux (user): `~/.config/github.com/Alia5/viiper/viiper.key.txt`
+- Linux (root/systemd): `/etc/viiper/viiper.key.txt`
+
+- Env var: `SISR_VIIPER_PASSWORD`
+
 #### `--keyboard-mouse-emulation [true|false]`, `--kbm [true|false]`
 
 Emulate/forward keyboard and mouse inputs

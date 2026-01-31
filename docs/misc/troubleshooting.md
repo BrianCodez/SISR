@@ -236,6 +236,29 @@
     5. **If** using remote VIIPER: Is the remote machine reachable?  
         Try pinging it
 
+### VIIPER authentication required {.toc-anchor}
+
+??? question "VIIPER authentication required"
+
+    **Error Message:**  
+
+    ```
+    VIIPER at <address> requires authentication.
+    You either have not provided a password, or the provided password is incorrect.
+    ```
+
+    This error occurs when connecting to VIIPER on a **non-localhost** address without providing the correct password.
+
+    1. Find the VIIPER password on the **receiving machine** (where VIIPER is running):  
+        - **Windows**: `%APPDATA%\VIIPER\viiper.key.txt`
+        - **Linux (user)**: `~/.config/github.com/Alia5/viiper/viiper.key.txt`
+        - **Linux (root/systemd)**: `/etc/viiper/viiper.key.txt`
+
+    2. Provide the password to SISR using one of these methods:  
+        - Launch argument: `--viiper-password <password>`
+        - Config file: `viiper_password = "<password>"`
+        - Environment variable: `SISR_VIIPER_PASSWORD=<password>`
+
 ### VIIPER version too old {.toc-anchor}
 
 ??? question "VIIPER version too old"

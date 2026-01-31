@@ -88,6 +88,19 @@ SISR can be configured via:
     </tr>
 
     <tr>
+      <td><code>--viiper-password &lt;password&gt;</code></td>
+      <td>
+          VIIPER API-server password<br />
+          Required for non-localhost connections<br />
+          Password can be found in:<br />
+          <code>%APPDATA%\VIIPER\viiper.key.txt</code> (Windows)<br />
+          <code>~/.config/github.com/Alia5/viiper/viiper.key.txt</code> (Linux)<br />
+          <code>/etc/viiper/viiper.key.txt</code> (Linux root/systemd)
+      </td>
+      <td><i>none</i></td>
+    </tr>
+
+    <tr>
       <td><code>--default-controller-type &lt;type&gt;</code></td>
       <td>
           Set the default controller type that should be emulated<br />
@@ -155,6 +168,9 @@ tray = true
 
 # VIIPER API server address
 viiper_address = "localhost:3242"
+
+# VIIPER API server password
+viiper_password = ""
 
 # Enable keyboard/mouse emulation.
 # Will only work if the specified VIIPER server does not run on localhost

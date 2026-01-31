@@ -91,6 +91,18 @@ for both Windows and Linux.
 
 Refer to the [VIIPER documentation](https://alia5.github.io/VIIPER/) for more details and information
 
+### Authentication/Password
+
+VIIPER **requires** a password to connect (from non-localhost) for security reasons.  
+
+You can find or change the password (on the machine running VIIPER) in:
+
+- **Windows**:               `%APPDATA%\\VIIPER\\viiper.key.txt`
+- **Linux (user)**:    `~/.config/github.com/Alia5/viiper/viiper.key.txt`
+- **Linux (root/systemd)**:  `/etc/viiper/viiper.key.txt`
+
+You can also set a custom password by creating/modifying the file above **and restarting the VIIPER service**
+
 ## Controller hosting machine (e.g. Steam Deck)
 
 On the machine that will host the physical controllers/Keyboard/Mouse (e.g. your Steam Deck)
@@ -101,7 +113,7 @@ USBIP and VIIPER are not required, only SISR itself
 
 - Add SISR as a non-Steam game in your Steam library  
       Provide the following flags as launch options  
-      - `-w -f --wcd true --kbm true --viiper-address <RECEIVING_MACHINE_IP>:3242`  
+      - `-w -f --wcd true --kbm true --viiper-address <RECEIVING_MACHINE_IP>:3242 --viiper-password <VIIPER_PASSWORD>`  
       <sup>show-window, fullscreen, continuous drawing, keyboard/mouse emulation, other machine address</sup>  
 <br />
 

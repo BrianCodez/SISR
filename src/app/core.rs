@@ -500,7 +500,7 @@ Please provide the correct password via the '--viiper-password' launch argument 
 You can find or change the password (on the machine running VIIPER) in:
 
     - Windows:               %APPDATA%\\VIIPER\\viiper.key.txt  
-    - Linux/macOS (user):    ~/.config/github.com/Alia5/viiper/viiper.key.txt 
+    - Linux (user):          ~/.config/github.com/Alia5/viiper/viiper.key.txt 
     - Linux (root/systemd):  /etc/viiper/viiper.key.txt 
 
 SISR will now exit.
