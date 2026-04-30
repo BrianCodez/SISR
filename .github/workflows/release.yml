@@ -30,12 +30,12 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6.0.2
               with:
                   fetch-depth: 0
 
             - name: Download all artifacts
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8.0.1
               with:
                   path: artifacts
 
@@ -78,7 +78,7 @@ jobs:
 
             - name: Create Release
               id: create_release
-              uses: softprops/action-gh-release@v1
+              uses: softprops/action-gh-release@v3.0.0
               with:
                   tag_name: ${{ steps.build_info.outputs.tag_name }}
                   name: "SISR ${{ steps.build_info.outputs.version }}"
