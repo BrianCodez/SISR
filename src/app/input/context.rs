@@ -4,7 +4,7 @@ use dashmap::DashMap;
 
 use crate::{
     app::input::device::Device,
-    config::{CONFIG, get_config},
+    config::get_config,
 };
 
 pub struct Context {

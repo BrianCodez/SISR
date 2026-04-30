@@ -183,7 +183,7 @@ impl Dialog {
     pub fn draw(&self, ctx: &egui::Context) {
         self.draw_backdrop(ctx);
 
-        let mut frame = egui::Frame::window(&ctx.style());
+        let mut frame = egui::Frame::window(&ctx.global_style());
         frame.inner_margin = egui::Margin::symmetric(24, 8);
 
         egui::Window::new(egui::WidgetText::from(self.title.clone()))
@@ -191,7 +191,7 @@ impl Dialog {
             .collapsible(false)
             .resizable(false)
             .title_bar(false)
-            .max_size(ctx.available_rect().size() - Vec2::splat(24.0))
+            .max_size(ctx.content_rect().size() - Vec2::splat(24.0))
             .order(egui::Order::Foreground)
             .frame(frame)
             .show(ctx, |ui| {

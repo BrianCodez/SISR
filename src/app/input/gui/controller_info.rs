@@ -11,7 +11,7 @@ use crate::config::get_config;
 pub fn draw(ctx: &Context, ectx: &egui::Context, open: &mut bool) {
     egui::Window::new("🎮 Gamepads")
         .id(Id::new("controller_info"))
-        .default_pos(ectx.available_rect().center() - Vec2::new(210.0, 200.0))
+        .default_pos(ectx.content_rect().center() - Vec2::new(210.0, 200.0))
         .default_height(400.0)
         .collapsible(false)
         .default_size(Vec2::new(420.0, 320.0))

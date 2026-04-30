@@ -1,37 +1,74 @@
-import { defineConfig } from 'vite'
-import { svelte } from '@sveltejs/vite-plugin-svelte'
+import { build, defineConfig} from 'vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { readdirSync, rmSync } from 'node:fs';
+import svg from '@poppanator/sveltekit-svg';
 
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { readdirSync } from 'node:fs'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const inputs = Object.fromEntries(
-    readdirSync(resolve(__dirname, 'src/entrypoints'))
-        .filter(file => file.endsWith('.ts'))
-        .map(file => [file.replace('.ts', ''), resolve(__dirname, 'src/entrypoints', file)])
-)
+let svgoPrefixIdsCount = 0;
 
-// https://vite.dev/config/
+if (!process.env.__VITE_CHILD_BUILD) {
+    process.env.__VITE_CHILD_BUILD = '1';
+    const inputs = readdirSync(resolve(__dirname, 'src/entrypoints'))
+        .filter((file) => file.endsWith('.ts'))
+        .map((file) => [file.replace('.ts', ''), resolve(__dirname, 'src/entrypoints', file)] as const);
+    rmSync(resolve(__dirname, 'dist'), { recursive: true, force: true });
+    await Promise.all(
+        inputs.map(([name, path]) =>
+            build({
+                configFile: resolve(__dirname, 'vite.config.ts'),
+                build: {
+                    emptyOutDir: false,
+                    rollupOptions: {
+                        input: { [name]: path }
+                    }
+                }
+            })
+        )
+    );
+    process.exit(0);
+}
+
 export default defineConfig({
-    plugins: [svelte()],
+    resolve: {
+        alias: {
+            $lib: resolve(__dirname, 'src/lib')
+        }
+    },
+    plugins: [
+        svg({
+            includePaths: [
+                './src/lib/assets/'
+            ],
+            svgoOptions: {
+                plugins: [
+                    'preset-default',
+                    {
+                        name: 'prefixIds',
+                        params: {
+                            delim: '',
+                            prefix: () => svgoPrefixIdsCount++
+                        }
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    } as any
+                ]
+            }
+        }),
+        svelte(),
+    ],
     build: {
-        rollupOptions: {
+        assetsInlineLimit: Infinity,
+        rolldownOptions: {
             treeshake: true,
-            input: inputs,
             output: {
-                entryFileNames: "[name].js",
-                chunkFileNames: "[name].js",
-                manualChunks: (_) => {
-                    // Force every import inlined
-                    return undefined;
-                },
-
-                // Lets make our own IIFEs, with blackjack and hookers (and return values!)
-                intro: "(function() {\nlet __res;\n",
-                outro: "return __res;})();",
-            },
+                inlineDynamicImports: true,
+                entryFileNames: '[name].js',
+                intro: '(function() {\nlet __INJECT_RETURN;\n',
+                outro: '\n return __INJECT_RETURN;\n})();'
+            }
         }
     }
-})
+});

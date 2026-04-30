@@ -4,7 +4,6 @@ use tracing::warn;
 use crate::app::core::get_tokio_handle;
 use crate::app::input::context::Context;
 use crate::app::steam_utils::binding_enforcer::binding_enforcer;
-use crate::app::steam_utils::cef_debug::ensure::CEF_DEBUG_PORT;
 use crate::app::steam_utils::cef_debug::inject::get_ws_server_port;
 use crate::app::steam_utils::util::{
     launched_in_steam_game_mode, launched_via_steam, open_controller_config,
@@ -19,7 +18,7 @@ pub fn draw(ctx: &Context, ectx: &egui::Context, open: &mut bool) {
 
     egui::Window::new("🚂 Steam Stuff")
         .id(Id::new("steam_stuff"))
-        .default_pos(ectx.available_rect().center() - Vec2::new(210.0, 200.0))
+        .default_pos(ectx.content_rect().center() - Vec2::new(210.0, 200.0))
         .default_size(Vec2::new(360.0, 260.0))
         .collapsible(false)
         .resizable(true)

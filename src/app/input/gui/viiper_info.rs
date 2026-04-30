@@ -7,7 +7,7 @@ use crate::app::input::{context::Context, event::handler_events::HandlerEvent, s
 pub fn draw(ctx: &Context, ectx: &egui::Context, open: &mut bool) {
     egui::Window::new("🐍 VIIPER")
         .id(Id::new("viiper_info"))
-        .default_pos(ectx.available_rect().center() - Vec2::new(210.0, 200.0))
+        .default_pos(ectx.content_rect().center() - Vec2::new(210.0, 200.0))
         .default_size(Vec2::new(360.0, 240.0))
         .collapsible(false)
         .resizable(true)

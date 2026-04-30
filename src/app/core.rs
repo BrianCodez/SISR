@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use std::process::{Child, Command};
 use std::process::ExitCode;
 use std::sync::{Arc, Mutex, OnceLock, RwLock};
-use std::{env, thread};
+use std::thread;
 use tokio::sync::Notify;
 use tracing::{debug, error, info, trace, warn};
 

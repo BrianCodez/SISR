@@ -10,6 +10,7 @@ use egui::{Align, Context, FontId, TextFormat, Vec2};
 use egui_wgpu::Renderer as EguiRenderer;
 use egui_wgpu::ScreenDescriptor;
 use egui_winit::State as EguiWinitState;
+use wgpu::CurrentSurfaceTexture;
 use sdl3::sys::mouse::{SDL_HideCursor, SDL_ShowCursor};
 use tracing::{debug, error, info, trace, warn};
 use winit::application::ApplicationHandler;
@@ -289,8 +290,8 @@ impl WindowRunner {
         };
 
         let frame = match gfx.surface.get_current_texture() {
-            Ok(frame) => frame,
-            Err(_) => return None,
+            CurrentSurfaceTexture::Success(frame) | CurrentSurfaceTexture::Suboptimal(frame) => frame,
+            _ => return None,
         };
 
         let view = frame
@@ -299,7 +300,8 @@ impl WindowRunner {
 
         let raw_input = egui_winit.take_egui_input(window.as_ref());
 
-        let full_output = self.egui_ctx.run(raw_input, |ctx| {
+        let full_output = self.egui_ctx.run_ui(raw_input, |top_ui| {
+            let ctx = top_ui.ctx();
             if self.ui_visible
                 && let Ok(dispatcher) = self.gui_dispatcher.lock()
             {
@@ -438,6 +440,7 @@ impl WindowRunner {
                 depth_stencil_attachment: None,
                 timestamp_writes: None,
                 occlusion_query_set: None,
+                multiview_mask: None,
             });
 
             let mut rpass = rpass.forget_lifetime();

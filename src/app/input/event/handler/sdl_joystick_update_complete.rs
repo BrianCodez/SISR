@@ -1,4 +1,4 @@
-use sdl3_sys::events::{SDL_EVENT_JOYSTICK_UPDATE_COMPLETE, SDL_Event, SDL_EventType};
+use sdl3_sys::events::{SDL_EVENT_JOYSTICK_UPDATE_COMPLETE, SDL_Event};
 
 use crate::app::input::event::router::{EventHandler, ListenEvent, RoutedEvent};
 use crate::app::input::sdl_loop::Subsystems;

@@ -225,7 +225,7 @@ fn show_update_dialog(version: &str, html_url: &str, install_channel: &str) {
     let message = format!("A new version of SISR is available: {}", version);
     let message_for_cb = message.clone();
 
-    let ver_update2 = ver_update.clone();
+    let _ver_update2 = ver_update.clone();
     let ver_dismiss2 = ver_dismiss.clone();
     let ver_remind2 = ver_remind.clone();
     let html_url_view2 = html_url_view.clone();

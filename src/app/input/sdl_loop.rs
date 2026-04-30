@@ -1,5 +1,5 @@
 use std::sync::{Arc, Mutex, OnceLock};
-use std::{env, panic};
+use std::panic;
 
 use crate::app::App;
 use crate::app::gui::dispatcher::GuiDispatcher;

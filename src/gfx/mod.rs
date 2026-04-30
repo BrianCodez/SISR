@@ -32,7 +32,7 @@ impl Gfx {
         //
         // On other platforms (Linux/Mac), use the default primary backend (Vulkan/Metal).
         #[cfg(windows)]
-        let instance = Instance::new(&InstanceDescriptor {
+        let instance = Instance::new(InstanceDescriptor {
             backends: Backends::DX12,
             backend_options: wgpu::BackendOptions {
                 dx12: Dx12BackendOptions {
@@ -41,13 +41,13 @@ impl Gfx {
                 },
                 ..Default::default()
             },
-            ..Default::default()
+            ..InstanceDescriptor::new_without_display_handle()
         });
 
         #[cfg(not(windows))]
-        let instance = Instance::new(&InstanceDescriptor {
+        let instance = Instance::new(InstanceDescriptor {
             backends: Backends::PRIMARY | Backends::VULKAN | Backends::GL,
-            ..Default::default()
+            ..InstanceDescriptor::new_without_display_handle()
         });
 
         let surface = instance

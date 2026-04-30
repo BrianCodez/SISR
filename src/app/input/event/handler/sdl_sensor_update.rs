@@ -1,4 +1,4 @@
-use sdl3_sys::events::{SDL_EVENT_GAMEPAD_UPDATE_COMPLETE, SDL_Event, SDL_EventType};
+use sdl3_sys::events::SDL_Event;
 use std::mem::discriminant;
 use std::sync::{Arc, Mutex};
 
@@ -44,7 +44,7 @@ impl EventHandler for Handler {
         let (which, sensor, data) = match event {
             Some(RoutedEvent::SdlEvent(event)) => match event {
                 Event::ControllerSensorUpdated {
-                    timestamp,
+                    timestamp: _,
                     which,
                     sensor,
                     data,
@@ -69,7 +69,7 @@ impl EventHandler for Handler {
         // for switch controllers this works, though
         // worry about other crap (SteamHW, Don't have playstation controllers) later
 
-        let Ok(mut ctx) = self.ctx.lock() else {
+        let Ok(ctx) = self.ctx.lock() else {
             tracing::error!("Failed to lock Context mutex");
             return;
         };
