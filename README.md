@@ -39,6 +39,11 @@ Unlike its predecessor [GlosSI](https://github.com/Alia5/GlosSI), it does not us
 **Highly experimental work in progress.** Everything is subject to change and may or may not work.  
 Expect bugs, crashes, and missing features.
 
+> [!CAUTION]
+If you are a Youtuber, and intend to talk about this software, **please talk to me first**  
+I **really** want to avoid people publicly saying wrong things about my Software, because of features missed.  
+It happens too often
+
 ## ✨🛣️ Features / Roadmap
 
 - ✅ Steam Input redirection to system level (localhost or network)  
