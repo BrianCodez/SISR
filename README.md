@@ -40,7 +40,7 @@ Unlike its predecessor [GlosSI](https://github.com/Alia5/GlosSI), it does not us
 Expect bugs, crashes, and missing features.
 
 > [!CAUTION]
-If you are a Youtuber, and intend to talk about this software, **please talk to me first**  
+If you are a Youtuber, and intend to talk about or mention this software, **please talk to me first**  
 I **really** want to avoid people publicly saying wrong things about my Software, because of features missed.  
 It happens too often
 
