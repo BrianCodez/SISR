@@ -18,6 +18,8 @@ do not support Steam Input or otherwise pose challenges, like (but not limited t
 - Windows Store games/apps
 - Games with broken Steam Input support
 
+All while still providing you the full feature set of SteamInput!
+
 SISR can also be used to "tunnel"/forward Steam Input configurations over the network to other machines, including Keyboard/Mouse.  
 This makes it possible to use devices like a Steam Deck as a dedicated controller without the need to stream the entire game.
 
@@ -27,15 +29,15 @@ Unlike its predecessor [GlosSI](https://github.com/Alia5/GlosSI), it does not us
 
 
 !!! warning
-**Highly experimental work in progress.** Everything is subject to change and may or may not work.  
-Expect bugs, crashes, and missing features.
+    **Highly experimental work in progress.** Everything is subject to change and may or may not work.  
+    Expect bugs, crashes, and missing features.
 
 !!! danger
-If you are a Youtuber, and intend cover this software (aside from just mentioning it), **consider talking to me first**  
-You are not required to, but I'd greatly appreciate it.
-- The software is an active WIP, not ready for wide usage, with a bigger update in the next few days.
-- I want to avoid people with significant reach stating false information.  
-- If something is unclear, I'm happy to help and/or improve my documentation
+    If you are a Youtuber, and intend cover this software (aside from just mentioning it), **consider talking to me first**  
+    You are not required to, but I'd greatly appreciate it.
+    - The software is an active WIP, not ready for wide usage, with a bigger update in the next few days.
+    - I want to avoid people with significant reach stating false information.  
+    - If something is unclear, I'm happy to help and/or improve my documentation
 
 ## ✨🛣️ Features / Roadmap
 
