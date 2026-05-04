@@ -25,22 +25,32 @@ The emulated controllers (and Keyboard/Mouse) are indistinguishable from real ha
 SISR achieves this by utilizing [VIIPER](https://github.com/Alia5/VIIPER) (requires **USBIP**).  
 Unlike its predecessor [GlosSI](https://github.com/Alia5/GlosSI), it does not use the unmaintained [ViGEm](https://github.com/ViGEm/ViGEmBus) driver.
 
+
 !!! warning
-    Highly experimental WIP. Expect bugs, crashes, and missing features.
+**Highly experimental work in progress.** Everything is subject to change and may or may not work.  
+Expect bugs, crashes, and missing features.
+
+!!! danger
+If you are a Youtuber, and intend cover this software (aside from just mentioning it), **consider talking to me first**  
+You are not required to, but I'd greatly appreciate it.
+- The software is an active WIP, not ready for wide usage, with a bigger update in the next few days.
+- I want to avoid people with significant reach stating false information.  
+- If something is unclear, I'm happy to help and/or improve my documentation
 
 ## ✨🛣️ Features / Roadmap
 
-- ✅ Steam Input redirection to system level (localhost or network)  
-    - Indistinguishable from real hardware
-- ✅ Xbox 360 controller emulation
-- ✅ Keyboard/Mouse emulation (only in network scenarios)  
-    - Allows use of devices like the Steam Deck as dedicated controller
-- ✅ Flexible configuration (CLI, config files, environment variables)
-- ✅ Multi-platform support (Windows, Linux)
-- ✅ Multiple operation modes
-    - Standalone background service
+- Full SteamInput featureset while emulating compatible controllers (indistinguishable from real hardware)
+  - Xbox360 _or_
+  - DualShock 4
+- **Non Steam Mode*
+-  Xbox 360 controller emulation
+- Multi-platform support (Windows, Linux)
+   Multiple operation modes
+    - Standalone background service (To be improved)
     - Steam overlay window mode
-- ✅ PS4 controller emulation
+-  PS4 controller emulation
+- Networked operation across computers
+  - Use devices like a SteamDeck as dedicated controller without streaming the whole game/display
 - ~~🚧 Xbox One controller emulation~~
 - ~~🚧 Generic controller emulation~~
 - 🚧 Gyro Passthrough
