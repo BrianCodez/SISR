@@ -5900,9 +5900,9 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
 name = "viiper-client"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "317222f2dc17fe8d3fd2da4bd0d355f08a9bd5d81b69f0a4c1189478b40909a7"
+checksum = "93c844127e9826f9d5195344421e4fd3ce0582e8c999e55d2f95b9b358718db7"
 dependencies = [
  "chacha20poly1305",
  "hmac",
