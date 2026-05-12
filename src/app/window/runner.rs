@@ -93,15 +93,26 @@ impl WindowRunner {
         #[cfg(target_os = "linux")]
         let event_loop = {
             use winit::platform::x11::EventLoopBuilderExtX11;
+
             let mut builder = EventLoop::<WindowRunnerEvent>::with_user_event();
-            if std::env::var_os("WAYLAND_DISPLAY").is_some() {
-                tracing::info!(
-                    "Wayland detected, forcing X11 backend for winit/wry compatibility \
-                     (lb-wry uses gdkx11 and requires X11 window handles)"
-                );
+            if std::env::var_os("WINIT_UNIX_BACKEND").as_deref()
+                == Some(std::ffi::OsStr::new("x11"))
+            {
+                tracing::info!("Using forced X11 event loop backend for Linux webview compatibility");
                 builder.with_x11();
             }
-            builder.build().expect("Failed to create event loop")
+
+            match builder.build() {
+                Ok(event_loop) => event_loop,
+                Err(e) => {
+                    tracing::error!(
+                        "Failed to create Linux event loop: {}. \
+                         If X11 compatibility mode is enabled, ensure XWayland is installed and an authorized DISPLAY is available.",
+                        e
+                    );
+                    return ExitCode::from(1);
+                }
+            }
         };
         #[cfg(not(target_os = "linux"))]
         let event_loop = EventLoop::<WindowRunnerEvent>::with_user_event()
@@ -420,7 +431,8 @@ impl ApplicationHandler<WindowRunnerEvent> for WindowRunner {
             set_dwm_passive_update_mode(window.as_ref());
         }
 
-        let mut webview = WebView::new(window.clone());
+        let mut webview = WebView::new(window.clone())
+            .expect("Failed to create required webview (Linux backend mismatch?)");
         if !fullscreen && initially_visible {
             webview.show();
         } else {

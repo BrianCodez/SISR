@@ -13,18 +13,11 @@ pub struct WebView {
 }
 
 impl WebView {
-    pub fn new(window: Arc<Window>) -> Self {
+    pub fn new(window: Arc<Window>) -> anyhow::Result<Self> {
         let webview;
 
         #[cfg(target_os = "linux")]
         {
-            if std::env::var_os("WAYLAND_DISPLAY").is_some()
-                && std::env::var_os("GDK_BACKEND").is_none()
-            {
-                // lb-wry uses gdkx11 and requires X11 window handles; force GDK to use
-                // X11 (XWayland) when running under Wayland
-                unsafe { std::env::set_var("GDK_BACKEND", "x11") };
-            }
             let _ = gtk::init();
         }
 
@@ -44,23 +37,43 @@ impl WebView {
 
         #[cfg(target_os = "linux")]
         {
-            webview = if std::env::var_os("WAYLAND_DISPLAY").is_some() {
-                let mut builder = WebViewBuilder::new()
-                    .with_url(&webview_url)
-                    .with_transparent(true);
-                builder.build(window.as_ref()).expect("Failed to build webview")
-            } else {
-                let mut builder = WebViewBuilder::new()
-                    .with_url(&webview_url)
-                    .with_transparent(true)
-                    .with_bounds(bounds);
-                builder.build_as_child(window.as_ref()).unwrap_or_else(|_| {
-                    WebViewBuilder::new()
+            use winit::raw_window_handle::{HasWindowHandle, RawWindowHandle};
+
+            let handle = window.window_handle().map_err(|e| {
+                anyhow::anyhow!("Failed to obtain window handle for webview creation: {e}")
+            })?;
+
+            webview = match handle.as_raw() {
+                RawWindowHandle::Xlib(_) => {
+                    let builder = WebViewBuilder::new()
                         .with_url(&webview_url)
                         .with_transparent(true)
-                        .build(window.as_ref())
-                        .expect("Failed to build webview")
-                })
+                        .with_bounds(bounds);
+
+                    match builder.build_as_child(window.as_ref()) {
+                        Ok(wv) => wv,
+                        Err(e) => {
+                            tracing::warn!(
+                                "Failed to build Linux child webview on X11, falling back to top-level build: {e}"
+                            );
+                            WebViewBuilder::new()
+                                .with_url(&webview_url)
+                                .with_transparent(true)
+                                .build(window.as_ref())
+                                .map_err(|fallback_e| {
+                                    anyhow::anyhow!(
+                                        "Failed to build Linux webview (child error: {e}; fallback error: {fallback_e})"
+                                    )
+                                })?
+                        }
+                    }
+                }
+                _ => {
+                    return Err(anyhow::anyhow!(
+                        "Linux Wayland window handles are not supported by wry::WebViewBuilder::build/build_as_child in this app path. \
+                         Use WebViewBuilderExtUnix::build_gtk with a gtk::Fixed container for native Wayland support."
+                    ));
+                }
             };
         }
 
@@ -78,15 +91,13 @@ impl WebView {
                 builder = builder.with_additional_browser_args("--remote-debugging-port=9223");
             }
 
-            webview = builder
-                .build(window.as_ref())
-                .expect("Failed to build webview");
+            webview = builder.build(window.as_ref())?;
         }
 
-        Self {
+        Ok(Self {
             webview,
             visible: true,
-        }
+        })
     }
 
     pub fn reload(&mut self) {
