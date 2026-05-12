@@ -193,6 +193,44 @@
 
     See the [VIIPER documentation](https://alia5.github.io/VIIPER/) for more details
 
+## Does SISR require Steam to be running? {.toc-anchor}
+
+??? question "Does SISR require Steam to be running?"
+
+    Yes, Steam must still be running in the background.  
+    SISR gives you the **full functionality of Steam Input without having to launch your games from Steam**,
+    but Steam itself still needs to be running.
+
+## Does SISR emulate an Xbox controller? Does that mean I lose joystick-to-mouse or other features? {.toc-anchor}
+
+??? question "Does SISR emulate an Xbox controller? Does that mean I lose joystick-to-mouse or other features?"
+
+    Yes, SISR emulates an Xbox controller! But **you don't lose any features doing this!**
+
+    Normally, Steam Input itself only "emulates" an Xbox controller anyway (via the overlay, specific to games launched from Steam).    
+    Keyboard and Mouse inputs Steam already handles system-wide via virtual inputs; SISR does nothing to them and they work exactly as if SISR weren't there at all.  
+    **Only** the "controller" part is redirected to the system.  
+
+    All Steam Input features (joystick-to-mouse, action layers, etc.) remain fully available **through Steam's Layout Configurator**.
+
+## Is Gyro supported? {.toc-anchor}
+
+??? question "Is Gyro supported?"
+
+    Yes! It works the same as with any other game that doesn't have explicit Steam Input API support.  
+    Simply bind **Gyro to Mouse** or **Gyro to Joystick** in Steam Input's Layout Configurator.
+
+## Can SISR be configured per-game or per-application, or is it system-wide? {.toc-anchor}
+
+??? question "Can SISR be configured per-game or per-application, or is it system-wide?"
+
+    You can have multiple Steam Input configs with SISR, yes.
+
+    Instead of launching SISR outside of Steam, **add SISR multiple times to Steam** as a non-Steam game  
+    and launch it from Steam  
+    Each entry can have its own Steam Input configuration.    
+    This way you get per-game (or per-use-case) control over your layout.
+
 ## Common Issues
 
 For common issues (doubled controllers, Steam CEF debugging, port conflicts, etc.), see: [Troubleshooting](troubleshooting.md)
