@@ -161,6 +161,44 @@ paths:
           description: OK
         '400':
           description: No app id available
+  /api/v1/steam_shortcuts:
+    get:
+      tags:
+      - steam
+      summary: List Steam Shortcuts
+      description: Lists the active Steam user's non-Steam shortcuts so SISR can switch Steam Input profiles.
+      operationId: get_steam_shortcuts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SteamShortcutsResponse'
+        '409':
+          description: Steam shortcut data unavailable
+  /api/v1/steam_shortcuts/launch:
+    post:
+      tags:
+      - steam
+      summary: Launch Steam Shortcut
+      description: Persists the selected shortcut app id, asks Steam to launch it, then shuts this SISR instance down.
+      operationId: launch_steam_shortcut
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectSteamShortcutRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Unknown shortcut app id
+        '500':
+          description: Failed to launch Steam shortcut
+        '409':
+          description: Steam shortcut data unavailable
   /api/v1/overlay_state_changed:
     post:
       tags:
@@ -246,6 +284,24 @@ paths:
       responses:
         '200':
           description: ''
+        '500':
+          description: Unknown error
+  /api/v1/steam_overlay:
+    post:
+      tags:
+      - ui
+      summary: Set Steam Overlay
+      description: Enables or disables the SISR Steam overlay window.
+      operationId: set_steam_overlay
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetSteamOverlayRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
         '500':
           description: Unknown error
   /api/v1/steam_cef_reachable:
@@ -378,6 +434,13 @@ components:
           type:
           - boolean
           - 'null'
+          default: null
+        steam_input_profile_app_id:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
           default: null
         require_controllers_connected_before_launch:
           type:
@@ -673,6 +736,15 @@ components:
         minimum: 0
       - type: boolean
       - type: object
+    SelectSteamShortcutRequest:
+      type: object
+      required:
+      - app_id
+      properties:
+        app_id:
+          type: integer
+          format: int32
+          minimum: 0
     SetForceControllerConfigRequest:
       type: object
       required:
@@ -686,6 +758,62 @@ components:
           minimum: 0
         enforce:
           type: boolean
+    SetSteamOverlayRequest:
+      type: object
+      required:
+      - enabled
+      properties:
+        enabled:
+          type: boolean
+    SteamShortcutProfile:
+      type: object
+      required:
+      - app_id
+      - game_id
+      - name
+      - exe
+      - selected
+      properties:
+        app_id:
+          type: integer
+          format: int32
+          minimum: 0
+        game_id:
+          type: integer
+          format: int64
+          minimum: 0
+        exe:
+          type: string
+        launch_options:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+        selected:
+          type: boolean
+        start_dir:
+          type:
+          - string
+          - 'null'
+    SteamShortcutsResponse:
+      type: object
+      required:
+      - shortcuts_path
+      - shortcuts
+      properties:
+        selected_app_id:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        shortcuts:
+          type: array
+          items:
+            $ref: '#/components/schemas/SteamShortcutProfile'
+        shortcuts_path:
+          type: string
     SteamStatus:
       type: object
       required:

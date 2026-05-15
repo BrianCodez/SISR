@@ -51,6 +51,7 @@ pub struct ConfigFileControllerEmulation {
     pub require_controllers_connected_before_launch: Option<bool>,
     pub gyro_passthrough: Option<bool>,
     pub allow_desktop_config: Option<bool>,
+    pub steam_input_profile_app_id: Option<u32>,
 }
 
 /// Get Config File

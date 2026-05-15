@@ -1,15 +1,15 @@
 # General usage of SISR
 
-SISR is designed to be used a tray application that runs in the background,  
-**effectively replacing Steam's Desktop configuration with added gamepad support**.  
+SISR is designed to be used a tray application that runs in the background,
+**effectively replacing Steam's Desktop configuration with added gamepad support**.
 
 This allows you to use SISR with **any** game or application,
 **regardless** of whether it is launched from Steam or not.
 
 !!! danger "Under construction"
-    SISR does not detect normal Steam game launches **yet!**  
+    SISR does not detect normal Steam game launches **yet!**
     The application thus needs to be stopped manually **before** using Games/Application
-    that normally work fine with Steam Input  
+    that normally work fine with Steam Input
 
     **Soon™**
 
@@ -23,22 +23,22 @@ This allows you to use SISR with **any** game or application,
 ## Usage
 
 !!! warning inline end "Controller connections"
-    By default SISR requires all controllers to be connected before launching SISR itself.  
+    By default SISR requires all controllers to be connected before launching SISR itself.
     This generally helps to prevent **some** potential controller duplication issue
 
     If you do not want this behaviour and require to have controllers connected/disconnected dynamically,
-    you can disable this behaviour  
+    you can disable this behaviour
     See: [Config](../../config/config)
 
 After [installation](../getting-started/installation.md), simply launch SISR **outside of Steam**
-via the Desktop or Start Menu shortcut.  
+via the Desktop or Start Menu shortcut.
 
 Your steam Input enabled controllers should now be redirected to emulated Xbox360 controllers
 that are indistinguishable from real hardware and work with any game/application.
 
 ### Tray menu
 
-You can access some SISR options by right-clicking the system tray icon  
+You can access some SISR options by right-clicking the system tray icon
 ![SISR System Tray Icon](../../assets/SISR-tray.png)
 
 | Option | Description |
@@ -55,28 +55,29 @@ You can access some SISR options by right-clicking the system tray icon
 ### SISR UI / Overlay
 
 SISR provides a basic information and debug UI that can be accessed
-by right-clicking the tray icon and selecting "Show UI"  
+by right-clicking the tray icon and selecting "Show UI"
 
-It shows detected controllers and their status as well as some basic information  
-as well as allowing you to change a few settings on the fly  
+It shows detected controllers and their status as well as some basic information
+as well as allowing you to change a few settings on the fly
 or even allowing you to change the emulated controller type without restarting SISR
 
 ![SISR UI](../../assets/SISR-overlay.png)
 
 !!! tip "Gamepad navigation"
 
-    The UI is currently **only** mouse navigable, but don't worry
+    The SISR UI now exposes the tray actions as controller-friendly buttons in Quick Settings.
+    By default, opening the UI focuses those actions so they can be selected without using the Windows tray menu.
 
-    You can use Steams Chord configuration to navigate the SISR UI with a gamepad as well!
-    Simply **hold down** the "Steam"/"Guide"/"Playstation" button and your right-stick/trackpad will move the cursor.  
+    If you prefer pointer-style navigation, you can also use Steam's Chord configuration:
+    hold down the "Steam"/"Guide"/"Playstation" button and your right-stick/trackpad will move the cursor.
     The Right and Left Triggers act as left and right mouse buttons respectively.
 
 ### Configuration
 
-If you want to change the default configuration of SISR, for example to emulate Playstation controller by default  
-you can do by creating a config file in:  
+If you want to change the default configuration of SISR, for example to emulate Playstation controller by default
+you can do by creating a config file in:
 
-- 🪟 Windows: `C:\Users\<UserName>\AppData\Roaming\SISR\config\SISR.toml`  
+- 🪟 Windows: `C:\Users\<UserName>\AppData\Roaming\SISR\config\SISR.toml`
 - 🐧 Linux: `$XDG_CONFIG_HOME/sisr/SISR.toml`
 
 ### Example: Emulate DualShock4 controllers by default

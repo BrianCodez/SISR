@@ -28,7 +28,7 @@ that should setup everything you need to get started with SISR quickly
     - Download and install VIIPER
       Using the [VIIPER install script](https://alia5.github.io/VIIPER/stable/getting-started/installation/#automated-install-script) to
       `%LOCALAPPDATA%\VIIPER\viiper.exe`
-        - Setup the USBIP-Win2 driver  
+        - Setup the USBIP-Win2 driver
           <sup>Driver only, not the full USBIP-Win2 package</sup>
     - Enable Steam CEF remote debugging
     - Create Desktop and Start Menu shortcuts
@@ -36,13 +36,13 @@ that should setup everything you need to get started with SISR quickly
     !!! tip "Version-Specific Installation"
         The install scripts are version-aware based on where you download them from:
 
-        - **Latest stable release:**  
+        - **Latest stable release:**
         `irm https://alia5.github.io/SISR/stable/install.ps1 | iex`
 
-        - **Specific version (e.g., v0.2.2):**  
+        - **Specific version (e.g., v0.2.2):**
         `irm https://alia5.github.io/SISR/0.2.2/install.ps1 | iex`
 
-        - **Latest _pre_-release (development snapshot):**  
+        - **Latest _pre_-release (development snapshot):**
         `irm https://alia5.github.io/SISR/main/install.ps1 | iex`
 
     ➡️ Continue with [Post-Installation](#i-post-installation)
@@ -58,24 +58,24 @@ that should setup everything you need to get started with SISR quickly
     The script will:
 
     - Download and install SISR to `~/.local/share/SISR/SISR.AppImage`
-    - Download and install VIIPER as a systemd service  
+    - Download and install VIIPER as a systemd service
       Using the [VIIPER install script](https://alia5.github.io/VIIPER/stable/getting-started/installation/#automated-install-script)
         - Attempt to setup USBIP (installation of required packages)
-        - Load the required `vhci-hcd` kernel module  
+        - Load the required `vhci-hcd` kernel module
           And setup automatic loading on boot
     - Enable Steam CEF remote debugging
-    - Create a Launcher entry for SISR  
+    - Create a Launcher entry for SISR
 
     !!! tip "Version-Specific Installation"
         The install scripts are version-aware based on where you download them from:
 
-        - **Latest stable release:**  
+        - **Latest stable release:**
         `curl -fsSL https://alia5.github.io/SISR/stable/install.sh | sh`
 
-        - **Specific version (e.g., v0.2.2):**  
+        - **Specific version (e.g., v0.2.2):**
         `curl -fsSL https://alia5.github.io/SISR/0.2.2/install.sh | sh`
 
-        - **Latest _pre_-release (development snapshot):**  
+        - **Latest _pre_-release (development snapshot):**
         `curl -fsSL https://alia5.github.io/SISR/main/install.sh | sh`
 
     ➡️ Continue with [Post-Installation](#i-post-installation)
@@ -85,7 +85,7 @@ that should setup everything you need to get started with SISR quickly
 ### 📝 Prerequisites
 
 - Steam installed and running (obviously...)
-- A working **USBIP client** on your machine  
+- A working **USBIP client** on your machine
 
 ### 🔌 USBIP
 
@@ -95,7 +95,7 @@ that should setup everything you need to get started with SISR quickly
 
 === "Windows"
 
-    VIIPER is bundled with SISR.No separate installation required  
+    VIIPER is bundled with SISR.No separate installation required
 
     That said, for networked scenarios it's easier to install VIIPER as a standalone service using the [VIIPER install script](https://alia5.github.io/VIIPER/stable/getting-started/installation/#automated-install-script)
 
@@ -123,7 +123,7 @@ that should setup everything you need to get started with SISR quickly
         ```bash
         sudo steamos-readonly disable
         ```
-    
+
 
 ## 🚀 Getting SISR running
 
@@ -131,7 +131,7 @@ that should setup everything you need to get started with SISR quickly
 
 === "Windows"
 
-    Download the zip archive for your architecture from the [Downloads](../downloads/index.md) page and extract it to a permanent location  
+    Download the zip archive for your architecture from the [Downloads](../downloads/index.md) page and extract it to a permanent location
 
     A permanent location is important as SISR creates a marker shortcut in Steam that points to it's location
 
@@ -139,7 +139,7 @@ that should setup everything you need to get started with SISR quickly
 
     Download the AppImage for your architecture from the [Downloads](../downloads/index.md) page
     and make it executable
-    
+
     ```bash
     chmod +x SISR-x86_64.AppImage
     ```
@@ -148,7 +148,7 @@ that should setup everything you need to get started with SISR quickly
 
 ### 🎮 First Run
 
-Once you have the prerequisites installed, run SISR via the Desktop or Start-Menu shortcut and follow the dialogs 😉  
+Once you have the prerequisites installed, run SISR via the Desktop or Start-Menu shortcut and follow the dialogs 😉
 
 Continue to [Post-Installation](#i-post-installation)
 
@@ -181,31 +181,31 @@ Continue to [Post-Installation](#i-post-installation)
 
     SISR may ask you to create the "SISR Marker" shortcut in Steam (if not done already)
 
-    SISR uses this shortcut to manage the Steam Input configuration for the emulated controllers and is required for operation  
+    SISR uses this shortcut to manage the Steam Input configuration for the emulated controllers and is required for operation
 
-    You can have other launch options as well, just make sure that only **a single** shortcut to SISR with the `--marker` argument exists in your Steam library.  
+    You can have other launch options as well, just make sure that only **a single** shortcut to SISR with the `--marker` argument exists in your Steam library.
 
-    You can even add multiple SISR shortcuts without `--marker` if you want to have different Steam Input configurations for different games/setups, but those will only work if those shortcuts are launched from Steam directly.  
+    You can even add multiple SISR shortcuts without `--marker` if you want to have different Steam Input configurations for different games/setups, but those will only work if those shortcuts are launched from Steam directly.
     See the [GlosSI like usage](../guides/glossi_like.md) guide for more details
 
 Post installation, when running SISR, it should be visible in your system tray
-and your controller(s) should be available on a system level.  
+and your controller(s) should be available on a system level.
 
 If you want to change the Steam Input configuration, right click the tray icon and select "Steam Controllerconfig"
 **or** change the Controller config of the `SISR Marker` shortcut in your Steam library
 
 (Note: yes, you can rename the shortcut, just make sure to keep the `--marker` argument
-and that the SISR executable is located at a stable path that does not change between runs)  
+and that the SISR executable is located at a stable path that does not change between runs)
 
 !!! tip "SISR Overlay"
     If you want to stop/start forwarding or change settings while in-game,
-    you can toggle the SISR overlay from the system tray **or** by using the keyboard-shortcut or controller-chord  
-    (**`CTRL+SHIFT+ALT+S`**, **`LB+RB+BACK+A`** _"A" button needs to be pressed last_)
+    you can toggle the SISR overlay from the system tray **or** by using the keyboard-shortcut or controller-chords
+    (**`CTRL+SHIFT+ALT+S`**, **`LB+RB+BACK+A`** toggles UI, **`LB+RB+BACK+Y`** toggles Allow Desktop Layout)
 
 ??? info "CEF Debugging Port"
 
-    SISR uses Steam's CEF debugging functionality located at port `8080`.  
-    _Steam does not provide an easy way to permanently change this port._  
+    SISR uses Steam's CEF debugging functionality located at port `8080`.
+    _Steam does not provide an easy way to permanently change this port._
     If something else is using it (or it's blocked), SISR may not work as expected.
 
 ## ➡️ Next steps

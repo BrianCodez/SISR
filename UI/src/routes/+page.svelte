@@ -17,7 +17,7 @@ import IcoSettings from '~icons/mdi/cog';
 let { data }: PageProps = $props();
 
 let debugInfoCardVisible = $state(false);
-let quickSettingsVisible = $state(false);
+let quickSettingsVisible = $state(true);
 
 let setupChecker = $state<CheckInitialSetup>()!;
 

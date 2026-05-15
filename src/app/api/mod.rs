@@ -41,14 +41,32 @@ pub async fn listen_and_serve(ctx: Arc<Mutex<Context>>) -> Result<(), std::io::E
                 ))
                 .routes(routes!(handler::steam_cef_reachable::steam_cef_reachable))
                 .routes(routes!(handler::get_input_info::get_input_info))
-                .routes(routes!(handler::set_force_controller_config::set_force_controller_config))
-                .routes(routes!(handler::open_steam_controller_config::open_steam_controller_config))
-                .routes(routes!(handler::config_file::get_config_file, handler::config_file::update_config_file))
-                .routes(routes!(handler::inject_overlay_notifier::inject_overlay_notifier))
+                .routes(routes!(
+                    handler::set_force_controller_config::set_force_controller_config
+                ))
+                .routes(routes!(
+                    handler::open_steam_controller_config::open_steam_controller_config
+                ))
+                .routes(routes!(
+                    handler::steam_shortcuts::get_steam_shortcuts,
+                    handler::steam_shortcuts::launch_steam_shortcut
+                ))
+                .routes(routes!(
+                    handler::config_file::get_config_file,
+                    handler::config_file::update_config_file
+                ))
+                .routes(routes!(
+                    handler::inject_overlay_notifier::inject_overlay_notifier
+                ))
                 .routes(routes!(handler::connect_viiper::connect_viiper))
                 .routes(routes!(handler::show_hide_ui::change_ui_state))
-                .routes(routes!(handler::enable_cef_remote_debugging::enable_cef_remote_debug))
-                .routes(routes!(handler::create_marker_shortcut::create_marker_shortcut))
+                .routes(routes!(handler::steam_overlay::set_steam_overlay))
+                .routes(routes!(
+                    handler::enable_cef_remote_debugging::enable_cef_remote_debug
+                ))
+                .routes(routes!(
+                    handler::create_marker_shortcut::create_marker_shortcut
+                ))
                 .routes(routes!(handler::shutdown::shutdown))
                 .routes(routes!(handler::restart_steam::restart_steam))
                 .routes(routes!(handler::restart_sisr::restart_sisr))
@@ -124,29 +142,11 @@ async fn api_error_middleware(req: axum::extract::Request, next: Next) -> Respon
     let detail = String::from_utf8_lossy(&bytes).to_string();
 
     if status == StatusCode::NOT_FOUND {
-        tracing::debug!(
-            "HTTP {} {} -> {}: {}",
-            method,
-            uri,
-            status.as_u16(),
-            detail
-        );
+        tracing::debug!("HTTP {} {} -> {}: {}", method, uri, status.as_u16(), detail);
     } else if status.is_client_error() {
-        tracing::warn!(
-            "HTTP {} {} -> {}: {}",
-            method,
-            uri,
-            status.as_u16(),
-            detail
-        );
+        tracing::warn!("HTTP {} {} -> {}: {}", method, uri, status.as_u16(), detail);
     } else {
-        tracing::error!(
-            "HTTP {} {} -> {}: {}",
-            method,
-            uri,
-            status.as_u16(),
-            detail
-        );
+        tracing::error!("HTTP {} {} -> {}: {}", method, uri, status.as_u16(), detail);
     }
 
     problem_details::ProblemDetails::from_status_code(status)
@@ -170,9 +170,7 @@ async fn cors_middleware(req: axum::extract::Request, next: Next) -> Response {
     let allow_origin = origin.as_deref().filter(|origin| {
         matches!(
             *origin,
-            "https://steamloopback.host"
-                | "http://steamloopback.host"
-                | "http://localhost:5173"
+            "https://steamloopback.host" | "http://steamloopback.host" | "http://localhost:5173"
         )
     });
 
@@ -218,10 +216,8 @@ async fn cors_middleware(req: axum::extract::Request, next: Next) -> Response {
 
 fn apply_cors_headers(res: &mut Response, origin: &str, request_headers: Option<&str>) {
     if let Ok(header_value) = origin.parse() {
-        res.headers_mut().insert(
-            "Access-Control-Allow-Origin",
-            header_value,
-        );
+        res.headers_mut()
+            .insert("Access-Control-Allow-Origin", header_value);
     }
 
     res.headers_mut().insert("Vary", "Origin".parse().unwrap());

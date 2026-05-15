@@ -10,6 +10,16 @@ use tracing::warn;
 use crate::config::CONFIG;
 
 static STEAM_PATH: OnceLock<Option<PathBuf>> = OnceLock::new();
+#[derive(Clone, Debug, serde::Serialize, utoipa::ToSchema)]
+pub struct SteamShortcut {
+    pub app_id: u32,
+    pub name: String,
+    pub exe: String,
+    pub start_dir: Option<String>,
+    pub game_id: u64,
+    pub launch_options: Option<String>,
+}
+
 static LAUNCHED_VIA_STEAM: OnceLock<bool> = OnceLock::new();
 static LAUNCHED_IN_STEAM_GAME_MODE: OnceLock<bool> = OnceLock::new();
 static OVERLAY_LIB: RwLock<Option<libloading::Library>> = RwLock::new(None);
@@ -236,7 +246,9 @@ pub fn steam_running() -> bool {
                     }
                 }
             } else {
-                tracing::warn!("Failed to read first process entry while checking for Steam process");
+                tracing::warn!(
+                    "Failed to read first process entry while checking for Steam process"
+                );
             }
 
             CloseHandle(snapshot);
@@ -303,9 +315,58 @@ fn get_case_insensitive<'a>(
         .map(|(_, v)| v)
 }
 
-pub fn shortcuts_has_sisr_marker(shortcuts_path: &PathBuf) -> u32 {
+pub fn steam_shortcuts(shortcuts_path: &PathBuf) -> Vec<SteamShortcut> {
     let shortcuts = open_shortcuts_vdf(shortcuts_path);
     trace!("Parsed shortcuts.vdf: {:?}", shortcuts);
+    let Some(shortcuts_array) = shortcuts.as_object() else {
+        return Vec::new();
+    };
+
+    let mut out = Vec::with_capacity(shortcuts_array.len());
+    for (_key, shortcut) in shortcuts_array {
+        let app_id = get_case_insensitive(shortcut, "appid")
+            .and_then(|v| v.as_u64())
+            .unwrap_or(0) as u32;
+        if app_id == 0 {
+            continue;
+        }
+
+        let name = get_case_insensitive(shortcut, "appname")
+            .and_then(|v| v.as_str())
+            .or_else(|| get_case_insensitive(shortcut, "AppName").and_then(|v| v.as_str()))
+            .unwrap_or_default()
+            .to_string();
+        let exe = get_case_insensitive(shortcut, "exe")
+            .and_then(|v| v.as_str())
+            .unwrap_or_default()
+            .to_string();
+        if name.is_empty() && exe.is_empty() {
+            continue;
+        }
+
+        out.push(SteamShortcut {
+            app_id,
+            game_id: shortcut_game_id(app_id),
+            name,
+            exe,
+            start_dir: get_case_insensitive(shortcut, "StartDir")
+                .and_then(|v| v.as_str())
+                .map(str::to_string),
+            launch_options: get_case_insensitive(shortcut, "LaunchOptions")
+                .and_then(|v| v.as_str())
+                .map(str::to_string),
+        });
+    }
+
+    out.sort_unstable_by(|a, b| a.name.cmp(&b.name).then(a.app_id.cmp(&b.app_id)));
+    out
+}
+
+pub fn shortcut_game_id(app_id: u32) -> u64 {
+    (app_id as u64) << 32 | ((2u64) << 24)
+}
+
+pub fn shortcuts_has_sisr_marker(shortcuts_path: &PathBuf) -> u32 {
     let running_executable_path = std::env::var("APPIMAGE")
         .ok()
         .and_then(|p| std::path::PathBuf::from(p).canonicalize().ok())
@@ -316,34 +377,29 @@ pub fn shortcuts_has_sisr_marker(shortcuts_path: &PathBuf) -> u32 {
         .unwrap_or_default()
         .to_lowercase();
     debug!("Current running executable path: {}", running_path_str);
-    if let Some(shortcuts_array) = shortcuts.as_object() {
-        for (_key, shortcut) in shortcuts_array {
-            let Some(path) = get_case_insensitive(shortcut, "exe") else {
-                continue;
-            };
-            let Some(args) = get_case_insensitive(shortcut, "LaunchOptions") else {
-                continue;
-            };
-            let Some(path_str) = path.as_str() else {
-                continue;
-            };
-            let Some(args_str) = args.as_str() else {
-                continue;
-            };
-            trace!("Checking shortcut - Path: {}, Args: {}", path_str, args_str);
-            if path_str
+
+    for shortcut in steam_shortcuts(shortcuts_path) {
+        trace!(
+            "Checking shortcut - Path: {}, Args: {}",
+            shortcut.exe,
+            shortcut.launch_options.as_deref().unwrap_or_default()
+        );
+        if shortcut
+            .exe
+            .to_lowercase()
+            .replace("\\", "/")
+            .contains(&running_path_str.to_lowercase().replace("\\", "/"))
+            && shortcut
+                .launch_options
+                .as_deref()
+                .unwrap_or_default()
                 .to_lowercase()
-                .replace("\\", "/")
-                .contains(&running_path_str.to_lowercase().replace("\\", "/"))
-                && args_str.to_lowercase().contains("--marker")
-            {
-                let app_id = get_case_insensitive(shortcut, "appid")
-                    .and_then(|v| v.as_u64())
-                    .unwrap_or(0) as u32;
-                return app_id;
-            }
+                .contains("--marker")
+        {
+            return shortcut.app_id;
         }
     }
+
     0
 }
 
@@ -467,7 +523,9 @@ pub fn unload_steam_overlay() {
 
     #[cfg(windows)]
     {
-        debug!("Leaking Steam overlay library handle (Windows: FreeLibrary is unsafe for this DLL)");
+        debug!(
+            "Leaking Steam overlay library handle (Windows: FreeLibrary is unsafe for this DLL)"
+        );
         std::mem::forget(overlay_lib);
     }
     #[cfg(not(windows))]
@@ -539,7 +597,6 @@ pub fn try_set_marker_steam_env() -> anyhow::Result<()> {
     }
     Ok(())
 }
-
 
 pub async fn open_controller_config(app_id: u32) {
     use crate::app::steam::cef_inject::{injector, util as cef_util};

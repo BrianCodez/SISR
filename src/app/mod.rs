@@ -1,3 +1,4 @@
+pub(crate) mod actions;
 mod api;
 mod assets;
 mod hid_hooks;

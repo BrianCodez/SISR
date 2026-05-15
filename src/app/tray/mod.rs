@@ -14,11 +14,9 @@ use crate::app::assets::ICON_BYTES;
 use crate::app::input::context::Context;
 use crate::app::steam::binding_enforcer::binding_enforcer;
 use crate::app::tray::event::TrayEvent;
-use crate::app::{steam, updater};
 use crate::app::window::event::{WindowRunnerEvent, get_event_sender};
-use crate::config::{get_config, update_config};
-
-use super::runner::{AppRunner, get_tokio_handle};
+use crate::app::{actions, updater};
+use crate::config::get_config;
 
 #[cfg(windows)]
 static TRAY_THREAD_ID: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
@@ -70,12 +68,16 @@ impl TrayContext {
         let enable_steam_overlay_item = CheckMenuItem::new(
             "Enable Steam Overlay",
             true,
-            get_config().window.create.unwrap_or(false) && get_config().window.fullscreen.unwrap_or(true),
+            get_config().window.create.unwrap_or(false)
+                && get_config().window.fullscreen.unwrap_or(true),
             None,
         );
         menu.append(&enable_steam_overlay_item)
             .expect("Failed to add enable steam overlay item");
-        menu_ids.insert(enable_steam_overlay_item.id().clone(), TrayMenuEvent::ToggleSteamOverlayEnabled);
+        menu_ids.insert(
+            enable_steam_overlay_item.id().clone(),
+            TrayMenuEvent::ToggleSteamOverlayEnabled,
+        );
 
         let enforcer = binding_enforcer().lock().ok();
         let app_id = enforcer.as_ref().and_then(|e| e.app_id());
@@ -98,7 +100,10 @@ impl TrayContext {
         );
         menu.append(&force_config_item)
             .expect("Failed to add Force Controllerconfig item");
-        menu_ids.insert(force_config_item.id().clone(), TrayMenuEvent::ToggleForceControllerConfig);
+        menu_ids.insert(
+            force_config_item.id().clone(),
+            TrayMenuEvent::ToggleForceControllerConfig,
+        );
 
         let quit_item = MenuItem::new("Quit", true, None);
         menu.append(&quit_item).expect("Failed to add quit item");
@@ -150,66 +155,41 @@ impl TrayContext {
             match self.menu_ids[&event.id] {
                 TrayMenuEvent::Quit => {
                     tracing::info!("Quit requested from tray menu");
-                    AppRunner::shutdown();
+                    actions::shutdown();
                     return true;
                 }
                 TrayMenuEvent::ToggleUI => {
                     tracing::debug!("Toggle window requested from tray menu");
                     let currently_visible = self.ctx.lock().map(|c| c.ui_visible).unwrap_or(false);
-                    let show = !currently_visible;
-                    if let Err(e) = get_event_sender().send_event(WindowRunnerEvent::ToggleUi(Some(show))) {
-                        tracing::error!("Failed to send ToggleUi event: {:?}", e);
-                    }
+                    actions::set_ui_visible(!currently_visible);
                 }
                 TrayMenuEvent::ToggleSteamOverlayEnabled => {
                     tracing::debug!("Toggle Steam Overlay requested from tray menu");
-                    let cfg = get_config();
-                    let currently_enabled = cfg.window.create.unwrap_or(false) && cfg.window.fullscreen.unwrap_or(true);
-                    let fullscreen = !currently_enabled;
-                    self.enable_steam_overlay_item.set_checked(fullscreen);
-                    if let Err(e) = get_event_sender().send_event(WindowRunnerEvent::SetFullscreen(fullscreen)) {
-                        tracing::error!("Failed to send SetFullscreen event: {:?}", e);
-                    }
-                    if fullscreen {
-                        if let Err(e) = get_event_sender().send_event(WindowRunnerEvent::ShowWindow()) {
-                            tracing::error!("Failed to send ShowWindow event: {:?}", e);
-                        }
-                    } else {
-                        if let Err(e) = get_event_sender().send_event(WindowRunnerEvent::HideWindow()) {
-                            tracing::error!("Failed to send HideWindow event: {:?}", e);
-                        }
-                    }
+                    let enabled = actions::toggle_steam_overlay_enabled();
+                    self.enable_steam_overlay_item.set_checked(enabled);
                 }
                 TrayMenuEvent::OpenControllerConfig => {
                     tracing::debug!("Open Steam Controllerconfig requested from tray menu");
-                    if let Some(app_id) = binding_enforcer().lock().ok().and_then(|e| e.app_id()) {
-                        get_tokio_handle().spawn(async move {
-                            steam::util::open_controller_config(app_id).await;
-                        });
-                    }
+                    actions::open_controller_config();
                 }
                 TrayMenuEvent::ToggleForceControllerConfig => {
                     tracing::debug!("Toggle Force Controllerconfig requested from tray menu");
-                    if let Ok(mut enforcer) = binding_enforcer().lock() {
-                        if enforcer.is_active() {
-                            update_config(|c| c.controller_emulation.allow_desktop_config = Some(true));
-                            enforcer.deactivate();
-                        } else {
-                            update_config(|c| c.controller_emulation.allow_desktop_config = Some(false));
-                            enforcer.activate();
-                        }
-                        // checkbox is inverted: checked = desktop config allowed = NOT enforcing
-                        self.force_config_item.set_checked(!enforcer.is_active());
+                    if let Some(allow) = actions::toggle_desktop_config_allowed() {
+                        self.force_config_item.set_checked(allow);
                     }
                 }
                 TrayMenuEvent::ShowUpdateDialog => {
                     tracing::debug!("Show update dialog requested from tray menu");
                     updater::clear_dismissed();
                     updater::clear_remind_later();
-                    if let Err(e) = get_event_sender().send_event(WindowRunnerEvent::ToggleUi(Some(true))) {
+                    if let Err(e) =
+                        get_event_sender().send_event(WindowRunnerEvent::ToggleUi(Some(true)))
+                    {
                         tracing::error!("Failed to send ToggleUi event: {:?}", e);
                     }
-                    if let Err(e) = get_event_sender().send_event(WindowRunnerEvent::InvalidateSvelteState()) {
+                    if let Err(e) =
+                        get_event_sender().send_event(WindowRunnerEvent::InvalidateSvelteState())
+                    {
                         tracing::error!("Failed to send InvalidateSvelteState event: {:?}", e);
                     }
                 }

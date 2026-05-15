@@ -62,7 +62,7 @@
     - Right-click the tray icon to show/hide the UI
     - Or launch with `-w --window-fullscreen false` to show the window at startup
     - **If** the window runs **as overlay** press **`Ctrl+Shift+Alt+S`**
-    or **`LB+RB+BACK+A`** (_"A" button needs to be pressed last_) to toggle UI visibility.
+    or **`LB+RB+BACK+A`** to toggle UI visibility. **`LB+RB+BACK+Y`** toggles Allow Desktop Layout.
 
     You can also run `sisr --help` to see all CLI options
 

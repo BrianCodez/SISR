@@ -1,12 +1,12 @@
 use std::{env, sync::Arc};
 
 use winit::window::Window;
-use wry::WebViewBuilder;
 #[cfg(target_os = "linux")]
 use wry::Rect;
+use wry::WebViewBuilder;
 
 use crate::app::api::get_api_port;
-
+use crate::app::window::event::UiControllerAction;
 pub struct WebView {
     webview: wry::WebView,
     visible: bool,
@@ -24,7 +24,7 @@ impl WebView {
         let webview_url = if env::var("DEV") == Ok("1".to_string()) {
             "http://localhost:5173/".to_string()
         } else {
-            format!("http://localhost:{}/", get_api_port().unwrap_or(5173)) 
+            format!("http://localhost:{}/", get_api_port().unwrap_or(5173))
         };
 
         #[cfg(target_os = "linux")]
@@ -109,6 +109,75 @@ impl WebView {
     pub fn invalidate_svelte_state(&mut self) {
         if let Err(e) = self.webview.evaluate_script("window.invalidateAll();") {
             tracing::warn!("Failed to invalidate Svelte state: {e}");
+        }
+    }
+
+    pub fn handle_controller_action(&mut self, action: UiControllerAction) {
+        let action = match action {
+            UiControllerAction::Next => "next",
+            UiControllerAction::Previous => "previous",
+            UiControllerAction::Activate => "activate",
+            UiControllerAction::Back => "back",
+        };
+        let script = format!(
+            r#"(function(action) {{
+                const selector = [
+                    'button:not([disabled])',
+                    'input:not([disabled])',
+                    'select:not([disabled])',
+                    'textarea:not([disabled])',
+                    'a[href]'
+                ].join(',');
+                const controls = Array.from(document.querySelectorAll(selector))
+                    .filter((el) => {{
+                        const style = window.getComputedStyle(el);
+                        const rect = el.getBoundingClientRect();
+                        return style.visibility !== 'hidden'
+                            && style.display !== 'none'
+                            && rect.width > 0
+                            && rect.height > 0;
+                    }});
+
+                if (controls.length === 0) {{
+                    return;
+                }}
+
+                const active = document.activeElement;
+                let index = controls.indexOf(active);
+
+                if (action === 'activate') {{
+                    if (index < 0) {{
+                        controls[0].focus();
+                    }} else {{
+                        active.click();
+                    }}
+                    return;
+                }}
+
+                if (action === 'back') {{
+                    const close = controls.find((el) =>
+                        el.textContent?.trim() === 'Hide UI'
+                        || el.getAttribute('aria-label') === 'Close'
+                    );
+                    if (close) {{
+                        close.click();
+                    }}
+                    return;
+                }}
+
+                if (index < 0) {{
+                    index = action === 'previous' ? controls.length : -1;
+                }}
+
+                const next = action === 'previous'
+                    ? (index + controls.length - 1) % controls.length
+                    : (index + 1) % controls.length;
+                controls[next].focus();
+            }})({action:?});"#,
+        );
+
+        if let Err(e) = self.webview.evaluate_script(&script) {
+            tracing::warn!("Failed to handle controller UI action: {e}");
         }
     }
 

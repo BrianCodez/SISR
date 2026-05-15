@@ -20,7 +20,8 @@ pub fn get_config() -> Config {
 
 pub fn update_config<F: FnOnce(&mut Config)>(f: F) {
     if let Ok(mut cfg) = CONFIG.write()
-        && let Some(c) = cfg.as_mut() {
+        && let Some(c) = cfg.as_mut()
+    {
         f(c);
     } else {
         tracing::error!("Failed to acquire write lock on CONFIG");
@@ -272,6 +273,14 @@ pub struct ControllerEmulation {
         help = "Allow desktop configuration (true/false) [default: false]"
     )]
     pub allow_desktop_config: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[arg(
+        long = "steam-input-profile-app-id",
+        value_name = "APPID",
+        env = "SISR_STEAM_INPUT_PROFILE_APP_ID",
+        help = "Steam shortcut app id to use for Steam Input config enforcement"
+    )]
+    pub steam_input_profile_app_id: Option<u32>,
 }
 
 #[derive(Parser, Debug, Serialize, Deserialize, Clone)]
@@ -337,6 +346,7 @@ impl Default for Config {
                 require_controllers_connected_before_launch: Some(false),
                 gyro_passthrough: Some(true),
                 allow_desktop_config: Some(false),
+                steam_input_profile_app_id: None,
             },
             debug: 0,
             marker: false,

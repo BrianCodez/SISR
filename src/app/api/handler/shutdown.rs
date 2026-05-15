@@ -1,8 +1,7 @@
 use axum::{Json, extract::State, response::IntoResponse};
 use reqwest::StatusCode;
 
-use crate::app::{api::AppState, runner::AppRunner, window::event::{WindowRunnerEvent, get_event_sender}};
-
+use crate::app::{actions, api::AppState};
 
 /// Shutdown Application
 ///
@@ -16,14 +15,10 @@ use crate::app::{api::AppState, runner::AppRunner, window::event::{WindowRunnerE
         (status = 500, description = "Unknown error"),
     )
 )]
-pub async fn shutdown(
-    State(_state): State<AppState>,
-) -> impl IntoResponse {
+pub async fn shutdown(State(_state): State<AppState>) -> impl IntoResponse {
     tracing::debug!("Received request to shutdown application");
 
-    let _ = get_event_sender().send_event(WindowRunnerEvent::HideWindow());
-    AppRunner::shutdown();
+    actions::shutdown();
 
     (StatusCode::OK, Json(serde_json::json!({}))).into_response()
 }
-

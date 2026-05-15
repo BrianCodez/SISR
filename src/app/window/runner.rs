@@ -25,7 +25,7 @@ use crate::{
             handler::{
                 enter_capture_mode, hide_window, invalidate_svelte_state, overlay_state_changed,
                 quit, redraw, router::EventRouter, set_fullscreen, set_kbm_cursor_grab,
-                show_window, toggle_ui,
+                show_window, toggle_ui, ui_controller_navigation,
             },
             input_forward::InputForward,
             webview::WebView,
@@ -68,6 +68,7 @@ impl WindowRunner {
         router.register(Arc::new(enter_capture_mode::Handler::default()));
         router.register(Arc::new(set_kbm_cursor_grab::Handler::default()));
         router.register(Arc::new(set_fullscreen::Handler::default()));
+        router.register(Arc::new(ui_controller_navigation::Handler::default()));
 
         Self {
             window: None,
@@ -98,7 +99,9 @@ impl WindowRunner {
             if std::env::var_os("WINIT_UNIX_BACKEND").as_deref()
                 == Some(std::ffi::OsStr::new("x11"))
             {
-                tracing::info!("Using forced X11 event loop backend for Linux webview compatibility");
+                tracing::info!(
+                    "Using forced X11 event loop backend for Linux webview compatibility"
+                );
                 builder.with_x11();
             }
 
@@ -476,8 +479,6 @@ impl ApplicationHandler<WindowRunnerEvent> for WindowRunner {
         self.previous_webview_visibility = self.webview.as_ref().is_some_and(|v| v.is_visible());
         self.previous_continuous_draw = self.continuous_draw;
         self.previous_passthrough_window = self.passthrough_window;
-
- 
 
         let window = window_clone.clone();
         let kbm_at_startup = self.is_kbm_enabled();

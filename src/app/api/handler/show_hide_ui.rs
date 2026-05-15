@@ -1,8 +1,7 @@
 use axum::{Json, extract::State, response::IntoResponse};
 use reqwest::StatusCode;
 
-use crate::app::{api::AppState, window::event::{WindowRunnerEvent, get_event_sender}};
-
+use crate::app::{actions, api::AppState};
 
 /// Change UI State
 ///
@@ -19,18 +18,20 @@ use crate::app::{api::AppState, window::event::{WindowRunnerEvent, get_event_sen
 )]
 pub async fn change_ui_state(
     State(_state): State<AppState>,
-    body: Json<ChangeUiStatePayload>
+    body: Json<ChangeUiStatePayload>,
 ) -> impl IntoResponse {
     tracing::debug!("Received request to change UI state: {:?}", body.show);
 
-    if let Err(e) = get_event_sender().send_event(WindowRunnerEvent::ToggleUi(Some(body.show))) {
-        tracing::error!("Failed to send ToggleUi event: {:?}", e);
-        return (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": "Failed to change UI state"}))).into_response();
+    if !actions::set_ui_visible(body.show) {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({"error": "Failed to change UI state"})),
+        )
+            .into_response();
     }
 
     (StatusCode::OK, Json(serde_json::json!({}))).into_response()
 }
-
 
 #[derive(serde::Deserialize, serde::Serialize, utoipa::ToSchema)]
 pub struct ChangeUiStatePayload {

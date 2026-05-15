@@ -2,6 +2,14 @@ use std::sync::{Arc, OnceLock};
 
 use winit::event_loop::EventLoopProxy;
 
+#[derive(Clone, Copy, Debug)]
+pub enum UiControllerAction {
+    Next,
+    Previous,
+    Activate,
+    Back,
+}
+
 #[derive(Debug)]
 pub enum WindowRunnerEvent {
     Quit(),
@@ -14,6 +22,7 @@ pub enum WindowRunnerEvent {
     SetKbmCursorGrab(bool),
     OverlayStateChanged(bool),
     InvalidateSvelteState(),
+    UiControllerAction(UiControllerAction),
 }
 
 pub static EVENT_SENDER: OnceLock<Arc<EventLoopProxy<WindowRunnerEvent>>> = OnceLock::new();
@@ -34,7 +43,10 @@ pub fn request_redraw() {
         tracing::trace!("Failed to send Redraw event to window event loop: {}", e);
     }
     if let Err(e) = sender.send_event(WindowRunnerEvent::InvalidateSvelteState()) {
-        tracing::trace!("Failed to send InvalidateSvelteState event to window event loop: {}", e);
+        tracing::trace!(
+            "Failed to send InvalidateSvelteState event to window event loop: {}",
+            e
+        );
     }
 }
 
